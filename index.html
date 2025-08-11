@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>HMS — Landing</title>
+
+<style>
+  :root{
+    --bg:#f3fbff; --card:#ffffff; --primary:#0066cc; --accent:#00b894; --muted:#6b7280;
+    --glass: rgba(255,255,255,0.6);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    background:linear-gradient(135deg,#eef9ff 0%, #ffffff 40%), url('https://picsum.photos/id/1011/1600/900') center/cover no-repeat;
+    min-height:100vh; display:flex; align-items:center; justify-content:center;
+  }
+  .container{
+    width:1100px; max-width:95%; background:var(--glass); border-radius:14px; padding:28px;
+    box-shadow:0 8px 30px rgba(2,6,23,0.15); backdrop-filter: blur(6px);
+    display:grid; grid-template-columns: 1fr 380px; gap:20px; align-items:center;
+  }
+  .brand{padding:10px}
+  .brand h1{margin:0; color:var(--primary); font-size:30px; letter-spacing:0.4px}
+  .lead{color:var(--muted); margin-top:8px}
+  .hero{
+    margin-top:18px;
+    display:grid; gap:12px;
+  }
+  .quickcard{
+    display:flex; gap:12px; align-items:center; background:var(--card);
+    padding:14px; border-radius:10px; box-shadow:0 4px 14px rgba(7,12,34,0.06);
+    transition:transform .25s ease, box-shadow .25s;
+  }
+  .quickcard:hover{transform:translateY(-6px); box-shadow:0 16px 40px rgba(6,12,35,0.12)}
+  .quickcard img{width:64px; height:64px; border-radius:8px; object-fit:cover}
+  .quickcard h3{margin:0; font-size:16px}
+  .quickcard p{margin:4px 0 0; color:var(--muted); font-size:13px}
+
+  .panel{
+    background: linear-gradient(180deg,#ffffff, #f8fcff);
+    border-radius:12px; padding:22px; box-shadow: 0 10px 30px rgba(2,6,23,0.06);
+  }
+  .roles{display:flex; flex-direction:column; gap:12px}
+  .role-btn{
+    display:flex; align-items:center; gap:10px; justify-content:space-between;
+    padding:12px 14px; border-radius:10px; border:1px solid #e6f0ff;
+    background:white; cursor:pointer; text-decoration:none; color:var(--primary);
+    font-weight:600;
+    transition:transform .18s, box-shadow .18s;
+  }
+  .role-btn:hover{transform:translateY(-4px); box-shadow:0 8px 24px rgba(2,6,23,0.06)}
+  .role-btn small{color:var(--muted); font-weight:500}
+  .footer-note{margin-top:18px; color:var(--muted); font-size:13px}
+
+  .floating-cta{
+    display:flex; gap:8px; margin-top:12px;
+  }
+  .btn{
+    padding:10px 14px; border-radius:10px; background:var(--primary); color:white; border:none; cursor:pointer;
+    box-shadow:0 10px 24px rgba(0,102,204,0.12);
+  }
+  .btn.alt{background:transparent; color:var(--primary); border:1px solid rgba(0,102,204,0.12)}
+  .small{font-size:14px}
+
+  /* responsive */
+  @media (max-width:880px){
+    .container{grid-template-columns:1fr; padding:18px}
+    .panel{order:2}
+  }
+</style>
+</head>
+<body>
+  <div class="container" role="main">
+    <div>
+      <div class="brand">
+        <h1>🩺 HMS — Hospital Management</h1>
+        <div class="lead">Patient scheduling, doctor availability and admin controls — demo front-end</div>
+      </div>
+
+      <div class="hero">
+        <div class="quickcard">
+          <img src="https://cdn-icons-png.freepik.com/512/8638/8638075.png" alt="patient">
+          <div>
+            <h3>Easy patient flow</h3>
+            <p>Register, book and view your appointments quickly.</p>
+          </div>
+        </div>
+
+        <div class="quickcard">
+          <img src="https://cdn-icons-png.flaticon.com/512/2343/2343668.png" alt="doctor">
+          <div>
+            <h3>Doctor schedule manager</h3>
+            <p>Doctors update availability and view appointments at a glance.</p>
+          </div>
+        </div>
+
+        <div class="quickcard">
+          <img src="https://cdn-icons-png.flaticon.com/512/2304/2304226.png" alt="admin">
+          <div>
+            <h3>Admin analytics</h3>
+            <p>Reports and billing for hospital admins.</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="footer-note"> &copy; 2025 HMS Hospital Management System. All rights reserved.</p>
+    </div>
+
+    <div class="panel" aria-labelledby="rolesHeading">
+      <h2 id="rolesHeading">Choose your role</h2>
+      <div class="roles" style="margin-top:14px">
+        <a class="role-btn" href="file:///Users/mahimhaarunkavitha/Desktop/patient-dashboard.html" id="patientRole">
+          <span>Patient</span>
+          <small>Access appointments & records</small>
+        </a>
+        <a class="role-btn" href="file:///Users/mahimhaarunkavitha/Desktop/doctor-dasboard.html" id="doctorRole">
+          <span>Doctor</span>
+          <small>Manage schedule & patients</small>
+        </a>
+        <a class="role-btn" href="file:///Users/mahimhaarunkavitha/Desktop/admin-dashboard.html" id="adminRole">
+          <span>Admin</span>
+          <small>Hospital management & analytics</small>
+        </a>
+
+        <a class="role-btn" href="file:///Users/mahimhaarunkavitha/Desktop/patient-registation.html">
+          <span>New Patient? Register</span>
+          <small>Quick sign-up form</small>
+        </a>
+      </div>
+
+      <div style="margin-top:18px; display:flex; justify-content:flex-end">
+        <button class="btn" onclick="seedDemo()">Seed Demo Data</button>
+        <button class="btn alt" onclick="clearDemo()">Reset Data</button>
+      </div>
+      <div style="margin-top:10px; color:var(--muted); font-size:13px">
+       
+      </div>
+    </div>
+  </div>
+
+<script>
+/* Demo data seeding for local usage. Safe — only uses localStorage. */
+function seedDemo(){
+  if(localStorage.getItem('hms_initialized')){
+    alert('Demo data already seeded.');
+    return;
+  }
+  const doctors = [
+    { id:'d1', name:'Dr. A. Kumar', specialty:'Cardiology', slots: generateSlots(), avatar:'https://picsum.photos/seed/doc1/200/200' },
+    { id:'d2', name:'Dr. L. Rao', specialty:'General', slots: generateSlots(), avatar:'https://picsum.photos/seed/doc2/200/200' },
+    { id:'d3', name:'Dr. S. Patel', specialty:'Pediatrics', slots: generateSlots(), avatar:'https://picsum.photos/seed/doc3/200/200' }
+  ];
+  const patients = [
+    { id:'p1', name:'Maya Singh', phone:'9876543210', dob:'1996-02-12' },
+    { id:'p2', name:'Ravi Menon', phone:'9123456780', dob:'1989-09-01' }
+  ];
+  const appointments = [
+    { id:'a1', patientId:'p1', doctorId:'d2', datetime: nextDateTime(1,10), status:'confirmed' },
+    { id:'a2', patientId:'p2', doctorId:'d1', datetime: nextDateTime(2,11), status:'confirmed' }
+  ];
+  localStorage.setItem('hms_doctors', JSON.stringify(doctors));
+  localStorage.setItem('hms_patients', JSON.stringify(patients));
+  localStorage.setItem('hms_appointments', JSON.stringify(appointments));
+  localStorage.setItem('hms_notifications', JSON.stringify([]));
+  localStorage.setItem('hms_initialized', '1');
+  alert('Demo data seeded. Open Patient/Doctor/Admin dashboards.');
+}
+function clearDemo(){
+  if(confirm('Clear all demo data in localStorage?')){
+    ['hms_doctors','hms_patients','hms_appointments','hms_notifications','hms_initialized'].forEach(k=>localStorage.removeItem(k));
+    alert('Data cleared.');
+  }
+}
+function generateSlots(){
+  // generate pseudo-availability slots (dates ISO)
+  const arr=[];
+  for(let d=1; d<=7; d++){
+    arr.push(nextDateTime(d,10));
+    arr.push(nextDateTime(d,11));
+    arr.push(nextDateTime(d,14));
+  }
+  return arr;
+}
+function nextDateTime(daysFromNow,hour){
+  const dt=new Date();
+  dt.setDate(dt.getDate()+daysFromNow);
+  dt.setHours(hour,0,0,0);
+  return dt.toISOString();
+}
+</script>
+</body>
+</html>
