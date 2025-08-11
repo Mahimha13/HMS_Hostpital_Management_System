@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>HMS — Book Appointment</title>
+<style>
+  :root{--bg:#fbfeff; --primary:#0b84ff; --muted:#6b7280}
+  body{margin:0; font-family:Inter,Arial; background:var(--bg); color:#07263f}
+  header{padding:14px 18px; background:linear-gradient(90deg,#fff,#f5fbff); display:flex; justify-content:space-between; align-items:center}
+  .wrap{max-width:1000px; margin:20px auto; padding:16px}
+  .grid{display:grid; grid-template-columns: 1fr 320px; gap:16px}
+  .card{background:#fff; padding:16px; border-radius:12px; box-shadow:0 8px 30px rgba(8,12,30,0.06)}
+  label{display:block; font-size:13px; margin-bottom:6px; color:var(--muted)}
+  select,input{width:100%; padding:10px; border-radius:8px; border:1px solid #eef6ff}
+  .slots{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px}
+  .slot{padding:10px; border-radius:8px; border:1px dashed #e6f3ff; text-align:center; cursor:pointer}
+  .slot.sel{background:linear-gradient(90deg,#dff2ff,#ffffff); border:1px solid #bfe6ff}
+  .btn{background:var(--primary); color:white; padding:10px 14px; border-radius:10px; border:none; cursor:pointer}
+  .muted{color:var(--muted)}
+  @media (max-width:920px){ .grid{grid-template-columns:1fr} .slots{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<header><div><a href="patient-dashboard.html">← Back</a></div><div>Book Appointment</div></header>
+
+<main class="wrap">
+  <div class="grid">
+    <div class="card">
+      <h3>Choose doctor & slot</h3>
+      <div style="margin-top:8px">
+        <label>Doctor</label>
+        <select id="doctorSelect"></select>
+      </div>
+
+      <div style="margin-top:10px">
+        <label>Patient</label>
+        <select id="patientSelect"></select>
+      </div>
+
+      <div style="margin-top:10px">
+        <label>Available Slots</label>
+        <div id="slotList" class="slots"></div>
+      </div>
+
+      <div style="margin-top:12px; display:flex; gap:8px; justify-content:flex-end">
+        <button class="btn" onclick="confirmBooking()">Confirm Booking</button>
+        <button class="btn" style="background:#6b7280" onclick="window.location.href='patient-dashboard.html'">Close</button>
+      </div>
+    </div>
+
+    <aside class="card">
+      <h4>Booking Summary</h4>
+      <div id="summary" style="margin-top:10px">No slot selected</div>
+    </aside>
+  </div>
+</main>
+
+<script>
+function getDoctors(){ return JSON.parse(localStorage.getItem('hms_doctors')||'[]'); }
+function getPatients(){ return JSON.parse(localStorage.getItem('hms_patients')||'[]'); }
+function getAppointments(){ return JSON.parse(localStorage.getItem('hms_appointments')||'[]'); }
+function saveAppointments(list){ localStorage.setItem('hms_appointments', JSON.stringify(list)); }
+function addNotification(text){ const ns=JSON.parse(localStorage.getItem('hms_notifications')||'[]'); ns.unshift({id:'n'+Date.now(),text,time:new Date().toISOString()}); localStorage.setItem('hms_notifications',JSON.stringify(ns));}
+
+let selectedSlot = null;
+let selectedDoctor = null;
+
+function fillDoctors(){
+  const sel = document.getElementById('doctorSelect');
+  sel.innerHTML = '<option value="">-- Select Doctor --</option>';
+  const docs = getDoctors();
+  docs.forEach(d => {
+    const opt = document.createElement('option'); opt.value=d.id; opt.text = d.name + ' — ' + d.specialty;
+    sel.appendChild(opt);
+  });
+  // preselect if navigated from patient-dashboard
+  const pre = localStorage.getItem('hms_book_doctor');
+  if(pre){ sel.value = pre; localStorage.removeItem('hms_book_doctor'); sel.dispatchEvent(new Event('change')); }
+}
+function fillPatients(){
+  const sel = document.getElementById('patientSelect');
+  sel.innerHTML = '<option value="">-- Select Patient --</option>';
+  const list = getPatients();
+  if(list.length===0){
+    sel.innerHTML = '<option value="">Guest (register first)</option>'; return;
+  }
+  list.forEach(p => { const o=document.createElement('option'); o.value=p.id; o.text=`${p.name} (${p.id})`; sel.appendChild(o); });
+}
+
+document.getElementById('doctorSelect').addEventListener('change', function(){
+  const id=this.value;
+  selectedDoctor = getDoctors().find(d=>d.id===id);
+  renderSlots(selectedDoctor);
+  updateSummary();
+});
+
+function renderSlots(doctor){
+  const slotsEl = document.getElementById('slotList');
+  slotsEl.innerHTML = '';
+  if(!doctor || !doctor.slots || doctor.slots.length===0){
+    slotsEl.innerHTML = '<div class="muted">No slots available for this doctor.</div>'; return;
+  }
+  const appts = getAppointments();
+  doctor.slots.forEach(s=>{
+    const taken = appts.some(a=>a.doctorId===doctor.id && a.datetime===s && a.status==='confirmed');
+    const btn = document.createElement('div'); btn.className='slot' + (taken ? ' taken' : '');
+    btn.innerText = new Date(s).toLocaleString() + (taken? ' — taken':'');
+    if(!taken){
+      btn.onclick = ()=>{ document.querySelectorAll('.slot').forEach(x=>x.classList.remove('sel')); btn.classList.add('sel'); selectedSlot=s; updateSummary(); }
+    } else {
+      btn.style.opacity = 0.5;
+    }
+    slotsEl.appendChild(btn);
+  });
+}
+
+function updateSummary(){
+  const s = document.getElementById('summary');
+  if(!selectedDoctor){ s.innerText='Choose a doctor to see slots'; return; }
+  s.innerHTML = `<strong>Doctor:</strong> ${selectedDoctor.name}<br/><strong>Slot:</strong> ${selectedSlot ? new Date(selectedSlot).toLocaleString() : '<span class="muted">none</span>'}`;
+}
+
+function confirmBooking(){
+  const pid = document.getElementById('patientSelect').value;
+  if(!selectedDoctor){ alert('Pick doctor'); return; }
+  if(!pid){ alert('Select patient or register first'); return; }
+  if(!selectedSlot){ alert('Select a slot'); return; }
+  const appts = getAppointments();
+  const id = 'a' + Date.now();
+  appts.push({ id, patientId: pid, doctorId: selectedDoctor.id, datetime: selectedSlot, status: 'confirmed' });
+  saveAppointments(appts);
+  addNotification(`Appointment confirmed: ${id} with ${selectedDoctor.name} for patient ${pid}`);
+  alert('Booked successfully!');
+  window.location.href = 'patient-dashboard.html';
+}
+
+fillDoctors(); fillPatients(); updateSummary();
+</script>
+</body>
+</html>
