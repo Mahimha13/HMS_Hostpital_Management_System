@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>HMS — Notifications</title>
+<style>
+  body{margin:0;font-family:Inter,Arial;background:#f7fbff}
+  header{padding:12px 16px;background:linear-gradient(90deg,#fff,#f1f9ff)}
+  .wrap{max-width:900px;margin:18px auto;padding:12px}
+  .card{background:#fff;padding:12px;border-radius:12px;box-shadow:0 8px 30px rgba(6,12,30,0.06)}
+  .notif{padding:10px;border-bottom:1px dashed #eef6ff}
+  .muted{color:#6b7280}
+  .btn{padding:8px 10px;border-radius:8px;border:none;background:#0b84ff;color:white;cursor:pointer}
+</style>
+</head>
+<body>
+<header><a href="file:///Users/mahimhaarunkavitha/Desktop/patient-dashboard.html">← Back</a></header>
+<main class="wrap">
+  <div class="card">
+    <h3>Notifications</h3>
+    <div style="display:flex;justify-content:flex-end;gap:8px;margin-bottom:8px">
+      <button class="btn" onclick="clearAll()">Clear All</button>
+    </div>
+    <div id="list"></div>
+  </div>
+</main>
+
+<script>
+function getNotifs(){ return JSON.parse(localStorage.getItem('hms_notifications')||'[]'); }
+function saveNotifs(n){ localStorage.setItem('hms_notifications', JSON.stringify(n)); }
+
+function render(){
+  const list = getNotifs(); const el = document.getElementById('list'); el.innerHTML='';
+  if(list.length===0){ el.innerHTML='<div class="muted">No notifications</div>'; return; }
+  list.forEach(n=>{
+    const div = document.createElement('div'); div.className='notif';
+    div.innerHTML = `<div>${n.text}</div><div class="muted" style="font-size:12px">${new Date(n.time).toLocaleString()}</div>`;
+    el.appendChild(div);
+  });
+}
+function clearAll(){ if(!confirm('Clear all notifications?')) return; saveNotifs([]); render(); }
+render();
+</script>
+</body>
+</html>
