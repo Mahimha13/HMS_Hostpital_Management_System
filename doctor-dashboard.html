@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>HMS — Doctor Dashboard</title>
+<style>
+  :root{--bg:#f7fbff; --card:#fff; --primary:#0b6cff; --muted:#6b7280}
+  *{box-sizing:border-box}
+  body{margin:0; font-family:Inter,Arial; background:var(--bg); color:#07263f}
+  header{padding:12px 18px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(90deg,#fff,#f1f9ff)}
+  .wrap{max-width:1100px; margin:18px auto; padding:16px}
+  .grid{display:grid; grid-template-columns: 1fr 360px; gap:16px}
+  .card{background:var(--card); padding:16px; border-radius:10px; box-shadow:0 8px 30px rgba(6,12,30,0.06)}
+  .appt{padding:10px;border-radius:8px;border:1px solid #eef6ff;margin-bottom:8px;display:flex;justify-content:space-between}
+  .btn{padding:8px 10px;border-radius:8px;border:none;background:var(--primary);color:white;cursor:pointer}
+</style>
+</head>
+<body>
+<header><div><a href="file:///Users/mahimhaarunkavitha/Desktop/index.html">← Home</a></div><div>Doctor Dashboard</div></header>
+
+<main class="wrap">
+  <div class="grid">
+    <section class="card">
+      <h3>My Appointments</h3>
+      <div id="apptArea" style="margin-top:12px"></div>
+    </section>
+
+    <aside class="card">
+      <h4>Manage Availability</h4>
+      <div style="margin-top:8px">
+        <label>Doctor</label>
+        <select id="docSel" style="width:100%; padding:8px; border-radius:8px"></select>
+      </div>
+
+      <div style="margin-top:8px">
+        <label>New slot (days from now)</label>
+        <input id="days" type="number" placeholder="e.g. 3" style="width:100%;padding:8px;border-radius:8px" />
+      </div>
+
+      <div style="margin-top:8px; display:flex; gap:8px; justify-content:flex-end">
+        <button class="btn" onclick="addSlot()">Add Slot</button>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<script>
+function getDoctors(){ return JSON.parse(localStorage.getItem('hms_doctors')||'[]'); }
+function getAppointments(){ return JSON.parse(localStorage.getItem('hms_appointments')||'[]'); }
+function saveDoctors(list){ localStorage.setItem('hms_doctors', JSON.stringify(list)); }
+function saveAppointments(list){ localStorage.setItem('hms_appointments', JSON.stringify(list)); }
+function addNotification(t){ const ns=JSON.parse(localStorage.getItem('hms_notifications')||'[]'); ns.unshift({id:'n'+Date.now(),text:t,time:new Date().toISOString()}); localStorage.setItem('hms_notifications',JSON.stringify(ns)); }
+
+function renderDoctorOptions(){
+  const sel = document.getElementById('docSel'); sel.innerHTML='';
+  getDoctors().forEach(d=>{ const o=document.createElement('option'); o.value=d.id; o.text=d.name; sel.appendChild(o); });
+  sel.onchange = showSlots;
+  if(sel.options.length) sel.value = sel.options[0].value;
+  showSlots();
+}
+
+function showSlots(){
+  const docId = document.getElementById('docSel').value;
+  const doc = getDoctors().find(d=>d.id===docId);
+  const apptArea = document.getElementById('apptArea'); apptArea.innerHTML='';
+  if(!doc) return;
+  const appts = getAppointments().filter(a=>a.doctorId===doc.id && a.status!=='cancelled');
+  if(appts.length===0) apptArea.innerHTML = '<div class="muted">No upcoming appointments</div>';
+  appts.forEach(a=>{
+    const p = (JSON.parse(localStorage.getItem('hms_patients')||'[]')).find(x=>x.id===a.patientId) || {name:a.patientId};
+    const node = document.createElement('div'); node.className='appt';
+    node.innerHTML = `<div><strong>${p.name}</strong><div class="muted">${new Date(a.datetime).toLocaleString()}</div></div>
+      <div>
+        <button class="btn" onclick="markDone('${a.id}')">Mark Done</button>
+      </div>`;
+    apptArea.appendChild(node);
+  });
+}
+
+function addSlot(){
+  const days = parseInt(document.getElementById('days').value||'0');
+  const sel = document.getElementById('docSel'); const id = sel.value;
+  if(!id || !days){ alert('Select doctor and days integer'); return; }
+  const doctors = getDoctors();
+  const doc = doctors.find(d=>d.id===id);
+  const dt = new Date(); dt.setDate(dt.getDate()+days); dt.setHours(10,0,0,0);
+  doc.slots = doc.slots || [];
+  doc.slots.push(dt.toISOString());
+  saveDoctors(doctors);
+  addNotification(`${doc.name} added new slot ${dt.toLocaleString()}`);
+  alert('Slot added');
+  showSlots();
+}
+
+function markDone(aid){
+  const arr=getAppointments();
+  const idx = arr.findIndex(x=>x.id===aid);
+  if(idx===-1) return;
+  arr[idx].status='done';
+  saveAppointments(arr);
+  addNotification(`Appointment ${aid} marked done`);
+  showSlots();
+}
+
+renderDoctorOptions();
+</script>
+</body>
+</html>
