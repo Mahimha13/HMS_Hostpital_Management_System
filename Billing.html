@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Billing - HMS</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to right, #f4faff, #d7f3ff);
+        margin: 0;
+        padding: 0;
+    }
+    header {
+        background-color: #0077b6;
+        color: white;
+        padding: 15px;
+        text-align: center;
+        font-size: 1.5em;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    nav {
+        background-color: #023e8a;
+        padding: 10px;
+        text-align: center;
+    }
+    nav a {
+        color: white;
+        margin: 0 15px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+    nav a:hover {
+        color: #90e0ef;
+    }
+    .container {
+        max-width: 900px;
+        margin: 30px auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+    table, th, td {
+        border: 1px solid #ddd;
+        text-align: center;
+        padding: 10px;
+    }
+    th {
+        background-color: #0077b6;
+        color: white;
+    }
+    tr:hover {
+        background-color: #f1faff;
+    }
+    .btn {
+        background-color: #0077b6;
+        color: white;
+        padding: 8px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .btn:hover {
+        background-color: #023e8a;
+    }
+</style>
+</head>
+<body>
+
+<header>Hospital Management System - Billing</header>
+<nav>
+    <a href="admin-dashboard.html">Back to Admin Dashboard</a>
+</nav>
+
+<div class="container">
+    <h2>Patient Billing Records</h2>
+    <table id="billingTable">
+        <tr>
+            <th>Bill ID</th>
+            <th>Patient Name</th>
+            <th>Service</th>
+            <th>Amount ($)</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+    </table>
+</div>
+
+<script>
+    const bills = [
+        {id: 'B001', name: 'John Doe', service: 'Consultation', amount: 50, status: 'Pending'},
+        {id: 'B002', name: 'Sarah Lee', service: 'X-Ray', amount: 120, status: 'Paid'},
+        {id: 'B003', name: 'Mark Smith', service: 'Blood Test', amount: 80, status: 'Pending'}
+    ];
+
+    function loadBills() {
+        const table = document.getElementById('billingTable');
+        bills.forEach(bill => {
+            let row = table.insertRow();
+            row.innerHTML = `
+                <td>${bill.id}</td>
+                <td>${bill.name}</td>
+                <td>${bill.service}</td>
+                <td>${bill.amount}</td>
+                <td>${bill.status}</td>
+                <td><button class="btn" onclick="toggleStatus('${bill.id}')">Toggle Status</button></td>
+            `;
+        });
+    }
+
+    function toggleStatus(id) {
+        const bill = bills.find(b => b.id === id);
+        bill.status = bill.status === 'Paid' ? 'Pending' : 'Paid';
+        document.getElementById('billingTable').innerHTML = `
+            <tr>
+                <th>Bill ID</th>
+                <th>Patient Name</th>
+                <th>Service</th>
+                <th>Amount ($)</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        `;
+        loadBills();
+    }
+
+    loadBills();
+</script>
+
+</body>
+</html>
