@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>HMS — Patient Dashboard</title>
+<style>
+  :root{--bg:#f6fbff; --primary:#1177ee; --accent:#00c38a; --card:#fff; --muted:#6b7280}
+  *{box-sizing:border-box}
+  body{font-family:Inter, system-ui, -apple-system; margin:0; background:var(--bg); color:#08304b}
+  header{display:flex; justify-content:space-between; align-items:center; padding:16px 22px; background:linear-gradient(90deg,#fff,#f1f9ff)}
+  header h1{font-size:18px; margin:0}
+  nav{display:flex; gap:10px}
+  nav a{padding:8px 12px; border-radius:8px; text-decoration:none; color:var(--primary); background:transparent; border:1px solid rgba(17,119,238,0.08)}
+  .wrap{max-width:1100px; margin:20px auto; padding:0 16px; display:grid; grid-template-columns:1fr 360px; gap:18px}
+  .card{background:var(--card); padding:18px; border-radius:12px; box-shadow:0 10px 30px rgba(6,12,30,0.06)}
+  .quick-actions{display:flex; gap:10px; margin-top:12px}
+  .cta{padding:10px 12px; border-radius:10px; background:var(--primary); color:white; border:none; cursor:pointer}
+  .muted{color:var(--muted)}
+  .appointment-list{margin-top:12px}
+  .appt{display:flex; justify-content:space-between; align-items:center; padding:10px; border-radius:10px; border:1px solid #eef6ff; margin-bottom:8px}
+  .slot{font-weight:700}
+  .right small{color:var(--muted)}
+  @media (max-width:980px){ .wrap{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<header>
+  <h1>Patient Dashboard</h1>
+  <div>
+    <a href="file:///Users/mahimhaarunkavitha/Desktop/index.html" style="margin-right:10px">Home</a>
+    <a href="file:///Users/mahimhaarunkavitha/Desktop/notifications.html">Notifications</a>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="card">
+    <h2>Welcome, Patient</h2>
+    <div class="muted">Quick actions</div>
+    <div class="quick-actions">
+      <button class="cta" onclick="goTo('file:///Users/mahimhaarunkavitha/Desktop/appointment-booking.html')">Book Appointment</button>
+      <button class="cta" onclick="goTo('file:///Users/mahimhaarunkavitha/Desktop/medical-history.html')">My Medical History</button>
+      <button class="cta" onclick="goTo('file:///Users/mahimhaarunkavitha/Desktop/patient-registation.html')">Update Profile</button>
+    </div>
+
+    <div style="margin-top:18px">
+      <h3>Your Appointments</h3>
+      <div id="apptList" class="appointment-list"></div>
+    </div>
+  </section>
+
+  <aside class="card">
+    <h3>Find a doctor</h3>
+    <p class="muted">Search mock doctors and book instantly.</p>
+    <input id="searchDoc" placeholder="Search by name or specialty" style="width:100%; padding:10px; border-radius:8px; border:1px solid #eef6ff"/>
+    <div id="docList" style="margin-top:12px"></div>
+  </aside>
+</main>
+
+<script>
+function goTo(url){ window.location.href = url; }
+
+/* Ensure demo data exists */
+if(!localStorage.getItem('hms_initialized')){ /* auto-seed small demo for convenience */
+  // minimal seeding
+  localStorage.setItem('hms_doctors', JSON.stringify([
+    {id:'d1',name:'Dr. A. Kumar',specialty:'Cardiology',avatar:'https://picsum.photos/seed/doc1/200/200', slots:[]},
+    {id:'d2',name:'Dr. L. Rao',specialty:'General',avatar:'https://picsum.photos/seed/doc2/200/200', slots:[]}
+  ]));
+  localStorage.setItem('hms_patients', JSON.stringify([]));
+  localStorage.setItem('hms_appointments', JSON.stringify([]));
+  localStorage.setItem('hms_notifications', JSON.stringify([]));
+  localStorage.setItem('hms_initialized','1');
+}
+
+function getDoctors(){ return JSON.parse(localStorage.getItem('hms_doctors')||'[]'); }
+function getAppointments(){ return JSON.parse(localStorage.getItem('hms_appointments')||'[]'); }
+function getPatients(){ return JSON.parse(localStorage.getItem('hms_patients')||'[]'); }
+
+function renderDoctors(list){
+  const el = document.getElementById('docList'); el.innerHTML='';
+  list.forEach(d=>{
+    const div = document.createElement('div'); div.className='appt';
+    div.innerHTML = `<div style="display:flex;align-items:center;gap:10px">
+      <img src="${d.avatar||'https://picsum.photos/seed/doc/80/80'}" style="width:52px;height:52px;border-radius:8px;object-fit:cover">
+      <div><strong>${d.name}</strong><div class="muted">${d.specialty}</div></div>
+    </div>
+    <div><button class="cta" onclick="startBooking('${d.id}')">Book</button></div>`;
+    el.appendChild(div);
+  });
+}
+
+function renderAppointments(){
+  const list=getAppointments();
+  const out=document.getElementById('apptList');
+  out.innerHTML = list.length ? '' : '<div class="muted">No appointments yet.</div>';
+  list.forEach(a=>{
+    const doc = getDoctors().find(d=>d.id===a.doctorId) || {};
+    const div = document.createElement('div'); div.className='appt';
+    const dt = new Date(a.datetime);
+    div.innerHTML = `<div>
+        <div><strong>${doc.name||'Doctor'}</strong> <small class="muted">(${doc.specialty||''})</small></div>
+        <div class="muted">${dt.toLocaleString()}</div>
+      </div>
+      <div class="right">
+        <div class="slot">${a.status}</div>
+        <div style="margin-top:6px"><button onclick="cancelAppt('${a.id}')" class="btn alt" style="padding:6px 8px;border-radius:8px">Cancel</button></div>
+      </div>`;
+    out.appendChild(div);
+  });
+}
+function cancelAppt(id){
+  if(!confirm('Cancel appointment?')) return;
+  let arr=getAppointments();
+  arr = arr.map(a => a.id===id ? {...a, status:'cancelled'} : a);
+  localStorage.setItem('hms_appointments', JSON.stringify(arr));
+  addNotification(`An appointment was cancelled (ID:${id})`);
+  renderAppointments();
+}
+
+function startBooking(doctorId){
+  // store intended doctor and navigate
+  localStorage.setItem('hms_book_doctor', doctorId);
+  window.location.href = 'file:///Users/mahimhaarunkavitha/Desktop/appointment-booking.html';
+}
+
+function addNotification(text){
+  const ns = JSON.parse(localStorage.getItem('hms_notifications')||'[]');
+  ns.unshift({ id:'n'+Date.now(), text, time:new Date().toISOString() });
+  localStorage.setItem('hms_notifications', JSON.stringify(ns));
+}
+
+/* search */
+document.getElementById('searchDoc').addEventListener('input', e=>{
+  const q=e.target.value.toLowerCase();
+  const filtered = getDoctors().filter(d=> (d.name+d.specialty).toLowerCase().includes(q));
+  renderDoctors(filtered);
+});
+
+/* init */
+renderDoctors(getDoctors());
+renderAppointments();
+</script>
+</body>
+</html>
