@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient - Medical History</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; margin: 0; }
+  header { background: #1e88e5; color: #fff; padding: 20px; text-align: center; }
+  header h1 { margin: 0; }
+  nav { margin-top: 10px; }
+  nav a { color: white; text-decoration: none; margin: 0 15px; font-weight: bold; }
+  nav a:hover { text-decoration: underline; }
+  main { padding: 20px; display: flex; flex-direction: column; align-items: center; }
+  .card { background: white; width: 80%; max-width: 600px; margin: 15px 0; padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  h2 { color: #1e88e5; }
+  ul { padding-left: 20px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Patient Medical History</h1>
+  <nav>
+    <a href="patient_dashboard.html">Dashboard</a>
+    <a href="appointment-booking.html">Book Appointment</a>
+  </nav>
+</header>
+<main>
+  <div class="card">
+    <h2>Past Diagnoses</h2>
+    <ul id="diagnosesList">
+      <li>Hypertension - Diagnosed on 15th Jan 2024</li>
+      <li>Diabetes Type 2 - Diagnosed on 22nd Mar 2023</li>
+    </ul>
+    <input type="text" id="newDiagnosis" placeholder="Add new diagnosis">
+    <button onclick="addDiagnosis()">Add</button>
+  </div>
+
+  <div class="card">
+    <h2>Medications</h2>
+    <ul id="medicationsList">
+      <li>Lisinopril - 10mg daily</li>
+      <li>Metformin - 500mg twice daily</li>
+    </ul>
+    <input type="text" id="newMed" placeholder="Add new medication">
+    <button onclick="addMedication()">Add</button>
+  </div>
+</main>
+
+<script>
+function addDiagnosis() {
+  const input = document.getElementById('newDiagnosis');
+  if(input.value.trim() !== '') {
+    const li = document.createElement('li');
+    li.textContent = input.value;
+    document.getElementById('diagnosesList').appendChild(li);
+    input.value = '';
+  }
+}
+function addMedication() {
+  const input = document.getElementById('newMed');
+  if(input.value.trim() !== '') {
+    const li = document.createElement('li');
+    li.textContent = input.value;
+    document.getElementById('medicationsList').appendChild(li);
+    input.value = '';
+  }
+}
+</script>
+</body>
+</html>
+
