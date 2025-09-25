@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Patient - Appointment History</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; margin: 0; }
+  header { background: #1e88e5; color: white; padding: 20px; text-align: center; }
+  nav a { color: white; text-decoration: none; margin: 0 15px; font-weight: bold; }
+  nav a:hover { text-decoration: underline; }
+  main { padding: 20px; display: flex; flex-direction: column; align-items: center; }
+  .card { background: white; width: 80%; max-width: 600px; margin: 15px 0; padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  h2 { color: #1e88e5; }
+  ul { padding-left: 20px; }
+  button { background-color: #1e88e5; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+  button:hover { background-color: #1565c0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Appointment History</h1>
+  <nav>
+    <a href="patient_dashboard.html">Dashboard</a>
+    <a href="appointment-booking.html">Book Appointment</a>
+  </nav>
+</header>
+<main>
+  <div class="card">
+    <h2>Past Appointments</h2>
+    <ul id="appointmentsList">
+      <li>Dr. Smith - 10th Aug 2025, 9:00 AM</li>
+      <li>Dr. Lee - 5th Sep 2025, 2:00 PM</li>
+    </ul>
+    <input type="text" id="newApp" placeholder="Add appointment (Doctor - Date, Time)">
+    <button onclick="addAppointment()">Add Appointment</button>
+  </div>
+</main>
+<script>
+function addAppointment() {
+  const input = document.getElementById('newApp');
+  if(input.value.trim() !== '') {
+    const li = document.createElement('li');
+    li.textContent = input.value;
+    document.getElementById('appointmentsList').appendChild(li);
+    input.value = '';
+  }
+}
+</script>
+</body>
+</html>
