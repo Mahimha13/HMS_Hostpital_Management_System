@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Quick Search & Filter</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #f4f7fc; margin: 0; }
+  header { background: #009688; color: white; padding: 20px; text-align: center; }
+  nav a { color: white; margin: 0 15px; text-decoration: none; font-weight: bold; }
+  nav a:hover { text-decoration: underline; }
+  main { padding: 20px; max-width: 900px; margin: auto; }
+  input { padding: 10px; width: 100%; max-width: 400px; margin-bottom: 20px; border-radius: 5px; border: 1px solid #ccc; display: block; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { padding: 10px; border: 1px solid #ccc; text-align: left; }
+  th { background: #009688; color: white; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Quick Search & Filter</h1>
+  <nav>
+    <a href="admin-dashboard.html">Dashboard</a>
+    <a href="admin-search.html">Search</a>
+  </nav>
+</header>
+<main>
+  <input type="text" id="searchInput" placeholder="Search staff or patients..." onkeyup="filterTable()">
+  <table id="dataTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Role</th>
+        <th>Department</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Dr. Smith</td><td>Doctor</td><td>Cardiology</td></tr>
+      <tr><td>Nurse Lee</td><td>Nurse</td><td>Emergency</td></tr>
+      <tr><td>Jane Doe</td><td>Patient</td><td>Cardiology</td></tr>
+      <tr><td>John Smith</td><td>Patient</td><td>Neurology</td></tr>
+    </tbody>
+  </table>
+</main>
+
+<script>
+function filterTable() {
+  const input = document.getElementById('searchInput').value.toLowerCase();
+  const rows = document.getElementById('dataTable').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+  for(let i=0;i<rows.length;i++){
+    const cells = rows[i].getElementsByTagName('td');
+    let match=false;
+    for(let j=0;j<cells.length;j++){
+      if(cells[j].innerText.toLowerCase().includes(input)){
+        match=true;
+        break;
+      }
+    }
+    rows[i].style.display = match ? '' : 'none';
+  }
+}
+</script>
+</body>
+</html>
