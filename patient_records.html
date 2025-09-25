@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doctor - Patient Records</title>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; margin: 0; }
+  header { background: #1976d2; color: white; padding: 20px; text-align: center; }
+  nav a { color: white; text-decoration: none; margin: 0 15px; font-weight: bold; }
+  nav a:hover { text-decoration: underline; }
+  main { padding: 20px; display: flex; flex-direction: column; align-items: center; }
+  .card { background: white; width: 80%; max-width: 600px; margin: 15px 0; padding: 20px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  h2 { color: #1976d2; }
+  input, button { padding: 8px; margin: 5px 0; border-radius: 5px; border: 1px solid #ccc; }
+  button { background-color: #1976d2; color: white; border: none; cursor: pointer; }
+  button:hover { background-color: #115293; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Patient Records</h1>
+  <nav>
+    <a href="doctor-dashboard.html">Dashboard</a>
+    <a href="doctor-schedule.html">Schedule</a>
+  </nav>
+</header>
+<main>
+  <div class="card">
+    <h2>Patient: Jane Doe</h2>
+    <p>Age: 28</p>
+    <p>Blood Group: O+</p>
+    <p>Medical History:</p>
+    <ul id="medHistory">
+      <li>Hypertension</li>
+      <li>Diabetes Type 2</li>
+    </ul>
+    <input type="text" id="newRecord" placeholder="Add medical record">
+    <button onclick="addRecord()">Add Record</button>
+  </div>
+</main>
+<script>
+function addRecord() {
+  const input = document.getElementById('newRecord');
+  if(input.value.trim() !== '') {
+    const li = document.createElement('li');
+    li.textContent = input.value;
+    document.getElementById('medHistory').appendChild(li);
+    input.value = '';
+  }
+}
+</script>
+</body>
+</html>
