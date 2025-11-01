@@ -29,7 +29,7 @@
   <h1>Patient Dashboard</h1>
   <div>
     <a href="file:///Users/mahimhaarunkavitha/Desktop/index.html" style="margin-right:10px">Home</a>
-    <a href="file:///Users/mahimhaarunkavitha/Desktop/notifications.html">Notifications</a>
+    <a href="notifications.html">Notifications</a>
   </div>
 </header>
 
@@ -38,9 +38,9 @@
     <h2>Welcome, Patient</h2>
     <div class="muted">Quick actions</div>
     <div class="quick-actions">
-      <button class="cta" onclick="goTo('file:///Users/mahimhaarunkavitha/Desktop/appointment-booking.html')">Book Appointment</button>
-      <button class="cta" onclick="goTo('file:///Users/mahimhaarunkavitha/Desktop/medical-history.html')">My Medical History</button>
-      <button class="cta" onclick="goTo('file:///Users/mahimhaarunkavitha/Desktop/patient-registation.html')">Update Profile</button>
+      <button class="cta" onclick="goTo('appointment-booking.html')">Book Appointment</button>
+      <button class="cta" onclick="goTo('medical-history.html')">My Medical History</button>
+      <button class="cta" onclick="goTo('patient-registation.html')">Update Profile</button>
     </div>
 
     <div style="margin-top:18px">
@@ -121,7 +121,7 @@ function cancelAppt(id){
 function startBooking(doctorId){
   // store intended doctor and navigate
   localStorage.setItem('hms_book_doctor', doctorId);
-  window.location.href = 'file:///Users/mahimhaarunkavitha/Desktop/appointment-booking.html';
+  window.location.href = 'appointment-booking.html';
 }
 
 function addNotification(text){
