@@ -1,32 +1,202 @@
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>HMS — Admin Dashboard</title>
-<style>
-  body{margin:0;font-family:Inter,Arial;background:#f8fbff}
-  header{padding:12px 18px;background:linear-gradient(90deg,#fff,#f1f9ff);display:flex;justify-content:space-between;align-items:center}
-  .wrap{max-width:1100px;margin:18px auto;padding:12px}
-  .grid{display:grid;grid-template-columns:1fr 360px;gap:16px}
-  .card{background:white;padding:14px;border-radius:12px;box-shadow:0 8px 30px rgba(6,12,30,0.06)}
-  .btn{padding:8px 10px;border-radius:8px;border:none;background:#0b6cff;color:white;cursor:pointer}
-  .muted{color:#6b7280}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Dashboard - HMS</title>
+  <style>
+    :root{
+      --bg:#0f1724; /* dark navy */
+      --card:#0b1220;
+      --accent:#06b6d4; /* teal */
+      --accent-2:#7c3aed; /* purple */
+      --muted:#94a3b8;
+      --glass: rgba(255,255,255,0.04);
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:linear-gradient(180deg,var(--bg),#071124);color:#e6eef8;min-height:100vh}
+    .wrap{max-width:1200px;margin:28px auto;padding:20px}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .brand{display:flex;gap:14px;align-items:center}
+    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:700}
+    h1{font-size:20px;margin:0}
+    .sub{color:var(--muted);font-size:13px}
+
+    .top-row{display:flex;gap:18px}
+    nav.sidebar{width:260px;background:var(--card);border-radius:14px;padding:18px;height:calc(100vh - 120px);position:sticky;top:20px}
+    nav ul{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:6px}
+    nav a{display:flex;align-items:center;gap:12px;padding:10px;border-radius:10px;color:inherit;text-decoration:none;font-weight:600}
+    nav a:hover{background:linear-gradient(90deg,rgba(255,255,255,0.03),transparent);}
+    nav a .dot{width:10px;height:10px;border-radius:50%;background:var(--accent)}
+
+    main.content{flex:1;margin-left:18px}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px}
+    .card{background:linear-gradient(180deg,var(--glass),transparent);border-radius:12px;padding:14px;box-shadow:0 6px 14px rgba(2,6,23,0.6)}
+    .kpi{display:flex;align-items:center;justify-content:space-between}
+    .kpi h2{margin:0;font-size:22px}
+    .kpi .meta{color:var(--muted);font-size:13px}
+
+    .panels{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+    .list{max-height:420px;overflow:auto}
+    table{width:100%;border-collapse:collapse}
+    table td, table th{padding:8px;border-bottom:1px dashed rgba(255,255,255,0.03);text-align:left}
+    .btn{display:inline-block;padding:8px 12px;border-radius:8px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#021428;font-weight:700;text-decoration:none}
+
+    /* small */
+    @media(max-width:980px){
+      .grid{grid-template-columns:repeat(2,1fr)}
+      nav.sidebar{display:none}
+      header{flex-direction:column;align-items:flex-start;gap:12px}
+    }
+    @media(max-width:640px){
+      .grid{grid-template-columns:1fr}
+      .panels{grid-template-columns:1fr}
+    }
+
+    /* quick pill nav for small screens */
+    .mini-nav{display:none;gap:8px}
+    @media(max-width:980px){.mini-nav{display:flex}}
+
+  </style>
 </head>
 <body>
-<header><div>Admin Dashboard</div><div><a href="index.html">Home</a></div></header>
-<main class="wrap">
-  <div class="grid">
-    <section class="card">
-      <h3>Overview</h3>
-      <div style="display:flex;gap:10px;margin-top:12px">
-        <div style="flex:1;padding:12px;border-radius:10px;border:1px solid #eef6ff">
-          <div id="totalPatients" style="font-size:20px;font-weight:700">0</div><div class="muted">Patients</div>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">HMS</div>
+        <div>
+          <h1>Admin Dashboard</h1>
+          <div class="sub">Hospital Management System • Administrator</div>
         </div>
-        <div style="flex:1;padding:12px;border-radius:10px;border:1px solid #eef6ff">
-          <div id="totalDoctors" style="font-size:20px;font-weight:700">0</div><div class="muted">Doctors</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:center">
+        <div class="sub">Welcome, Admin</div>
+        <a class="btn" href="#" id="signout">Sign out</a>
+      </div>
+    </header>
+
+    <div class="top-row">
+      <nav class="sidebar" aria-label="Sidebar">
+        <ul>
+          <li><a href="AdminSearch.html"><span class="dot"></span> Admin Search</a></li>
+          <li><a href="Analytics.html"><span class="dot" style="background:var(--accent-2)"></span> Analytics</a></li>
+          <li><a href="Billing.html"><span class="dot" style="background:#f59e0b"></span> Billing</a></li>
+          <li><a href="Staff_Resource_Management.html"><span class="dot" style="background:#10b981"></span> Staff & Resource</a></li>
+          <li><a href="Appt_history.html"><span class="dot" style="background:#ef4444"></span> Appointment History</a></li>
+          <li><a href="patient_record.html"><span class="dot" style="background:#60a5fa"></span> Patient Records</a></li>
+          <li><a href="Settings.html"><span class="dot" style="background:#94a3b8"></span> Settings</a></li>
+        </ul>
+      </nav>
+
+      <main class="content">
+        <div class="mini-nav">
+          <a class="btn" href="AdminSearch.html">Search</a>
+          <a class="btn" href="Analytics.html">Analytics</a>
+          <a class="btn" href="Billing.html">Billing</a>
         </div>
-        <div style="flex:1;padding:12px;border-radius:10px;border:1px solid #eef6ff">
-          <div id="totalAppointments" style="font-size:20px;font-weight:700">0</div><div class="muted">Appointments</div>
-        </div>
-      </div
+
+        <section class="grid">
+          <div class="card">
+            <div class="kpi">
+              <div>
+                <h2 id="total-patients">1,254</h2>
+                <div class="meta">Total patients (this month)</div>
+              </div>
+              <div style="text-align:right">
+                <div class="meta">Admitted: <strong id="admitted">64</strong></div>
+                <div class="meta">Discharged: <strong id="discharged">42</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="kpi">
+              <div>
+                <h2 id="appointments">312</h2>
+                <div class="meta">Appointments (upcoming)</div>
+              </div>
+              <div style="text-align:right">
+                <div class="meta">Pending: <strong id="pending">54</strong></div>
+                <div class="meta">Completed: <strong id="completed">258</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="kpi">
+              <div>
+                <h2 id="revenue">₹1.2M</h2>
+                <div class="meta">Revenue (this month)</div>
+              </div>
+              <div style="text-align:right">
+                <a class="btn" href="Billing.html">Open Billing</a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panels">
+          <div class="card list">
+            <h3 style="margin-top:0">Recent Appointments</h3>
+            <table id="appt-table">
+              <thead>
+                <tr><th>Time</th><th>Patient</th><th>Doctor</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                <!-- rows injected by JS -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card">
+            <h3 style="margin-top:0">Quick Actions</h3>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:8px">
+              <a class="btn" href="AdminSearch.html">Search Patient</a>
+              <a class="btn" href="Staff_Resource_Management.html">Manage Staff</a>
+              <a class="btn" href="Analytics.html">Open Analytics</a>
+              <a class="btn" href="Appt_history.html">Appointment History</a>
+              <a class="btn" href="patient_record.html">Patient Records</a>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+  </div>
+
+  <script>
+    // Example small data and wiring; replace with real data fetching
+    const appts = [
+      {time:'2025-11-01 09:00', name:'Ravi Kumar', doc:'Dr. Meera', status:'Checked-in'},
+      {time:'2025-11-01 09:30', name:'Priya Singh', doc:'Dr. Arjun', status:'Pending'},
+      {time:'2025-11-01 10:00', name:'Suresh Patel', doc:'Dr. Meera', status:'Cancelled'},
+    ];
+
+    function renderAppts(){
+      const tb = document.querySelector('#appt-table tbody');
+      tb.innerHTML = '';
+      appts.forEach(a=>{
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${a.time}</td><td><a href=\"patient_record.html?patient=${encodeURIComponent(a.name)}\">${a.name}</a></td><td><a href=\"doctor_dashboard.html?doc=${encodeURIComponent(a.doc)}\">${a.doc}</a></td><td>${a.status}</td>`;
+        tb.appendChild(tr);
+      })
+    }
+
+    renderAppts();
+
+    // nav highlight based on current URL
+    (function highlight(){
+      const path = location.pathname.split('/').pop();
+      document.querySelectorAll('nav a').forEach(a=>{
+        if(a.getAttribute('href')===path) a.style.background='linear-gradient(90deg, rgba(255,255,255,0.03), rgba(0,0,0,0))';
+      })
+    })();
+
+  </script>
+</body>
+</html>
+
+
