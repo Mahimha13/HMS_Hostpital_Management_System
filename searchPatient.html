@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Patient Search - HMS</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: #eaf7f9;
+      color: #033f47;
+    }
+    header {
+      background: #0097a7;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .container {
+      max-width: 900px;
+      background: white;
+      margin: 30px auto;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .search-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    input, select, button {
+      padding: 10px;
+      font-size: 15px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    input, select {
+      flex: 1;
+      min-width: 160px;
+    }
+    button {
+      background: #00acc1;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    button:hover {
+      background: #007d87;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #d0ebee;
+      text-align: left;
+    }
+    th {
+      background: #00acc1;
+      color: white;
+    }
+    tr:hover {
+      background: #f2fbfc;
+    }
+    .details {
+      display: none;
+      background: #f8ffff;
+      border-left: 5px solid #00acc1;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    .details h3 {
+      margin-top: 0;
+      color: #007d87;
+    }
+  </style>
+</head>
+<body>
+  <header>Patient Search</header>
+
+  <div class="container">
+    <div class="search-bar">
+      <input type="text" id="sname" placeholder="Enter patient name or ID...">
+      <select id="sdept">
+        <option value="">All Departments</option>
+        <option>Cardiology</option>
+        <option>Orthopedics</option>
+        <option>Neurology</option>
+        <option>Dermatology</option>
+        <option>Pediatrics</option>
+      </select>
+      <button onclick="searchPatient()">Search</button>
+    </div>
+
+    <table id="ptable">
+      <thead>
+        <tr><th>ID</th><th>Name</th><th>Department</th><th>Doctor</th><th>Status</th><th>Action</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div class="details" id="details"></div>
+  </div>
+
+  <script>
+    const patients = [
+      {id:'P101',name:'Ravi Kumar',dept:'Cardiology',doctor:'Dr. Arjun',age:45,gender:'Male',condition:'Chest Pain',status:'Admitted',visit:'2025-10-25'},
+      {id:'P102',name:'Priya Sharma',dept:'Neurology',doctor:'Dr. Meera',age:29,gender:'Female',condition:'Migraine',status:'Discharged',visit:'2025-10-24'},
+      {id:'P103',name:'Suresh Patel',dept:'Orthopedics',doctor:'Dr. Asha',age:51,gender:'Male',condition:'Fracture',status:'Under Observation',visit:'2025-10-28'},
+      {id:'P104',name:'Anita Verma',dept:'Pediatrics',doctor:'Dr. Rahul',age:33,gender:'Female',condition:'Fever',status:'Admitted',visit:'2025-10-20'},
+      {id:'P105',name:'Vikram Das',dept:'Cardiology',doctor:'Dr. Arjun',age:47,gender:'Male',condition:'High BP',status:'Discharged',visit:'2025-10-21'},
+      {id:'P106',name:'Neha Singh',dept:'Dermatology',doctor:'Dr. Kiran',age:27,gender:'Female',condition:'Rash',status:'Under Observation',visit:'2025-10-22'},
+      {id:'P107',name:'Arjun Rao',dept:'Neurology',doctor:'Dr. Meera',age:40,gender:'Male',condition:'Seizure',status:'Admitted',visit:'2025-10-19'},
+      {id:'P108',name:'Divya Menon',dept:'Orthopedics',doctor:'Dr. Asha',age:36,gender:'Female',condition:'Knee Pain',status:'Discharged',visit:'2025-10-23'},
+      {id:'P109',name:'Karan Gupta',dept:'Pediatrics',doctor:'Dr. Rahul',age:42,gender:'Male',condition:'Cough',status:'Admitted',visit:'2025-10-18'},
+      {id:'P110',name:'Sneha Reddy',dept:'Cardiology',doctor:'Dr. Arjun',age:30,gender:'Female',condition:'Arrhythmia',status:'Under Observation',visit:'2025-10-27'},
+      {id:'P111',name:'Rahul Mehta',dept:'Neurology',doctor:'Dr. Meera',age:39,gender:'Male',condition:'Stroke',status:'Admitted',visit:'2025-10-26'},
+      {id:'P112',name:'Priya Nair',dept:'Dermatology',doctor:'Dr. Kiran',age:26,gender:'Female',condition:'Eczema',status:'Discharged',visit:'2025-10-24'},
+      {id:'P113',name:'Suresh Iyer',dept:'Orthopedics',doctor:'Dr. Asha',age:48,gender:'Male',condition:'Back Pain',status:'Admitted',visit:'2025-10-28'},
+      {id:'P114',name:'Anita George',dept:'Pediatrics',doctor:'Dr. Rahul',age:34,gender:'Female',condition:'Flu',status:'Under Observation',visit:'2025-10-25'},
+      {id:'P115',name:'Vivek Raj',dept:'Cardiology',doctor:'Dr. Arjun',age:50,gender:'Male',condition:'Heart Block',status:'Admitted',visit:'2025-10-29'}
+    ];
+
+    function searchPatient() {
+      const key = document.getElementById('sname').value.toLowerCase();
+      const dept = document.getElementById('sdept').value;
+      const tb = document.querySelector('#ptable tbody');
+      tb.innerHTML = '';
+
+      const res = patients.filter(p => 
+        (p.name.toLowerCase().includes(key) || p.id.toLowerCase().includes(key)) &&
+        (dept === '' || p.dept === dept)
+      );
+
+      res.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${p.id}</td>
+          <td>${p.name}</td>
+          <td>${p.dept}</td>
+          <td>${p.doctor}</td>
+          <td>${p.status}</td>
+          <td><button onclick=\"show('${p.id}')\">View</button></td>
+        `;
+        tb.appendChild(tr);
+      });
+    }
+
+    function show(id) {
+      const p = patients.find(x => x.id === id);
+      if (!p) return;
+      const d = document.getElementById('details');
+      d.style.display = 'block';
+      d.innerHTML = `
+        <h3>${p.name} (${p.id})</h3>
+        <p><b>Age:</b> ${p.age}</p>
+        <p><b>Gender:</b> ${p.gender}</p>
+        <p><b>Department:</b> ${p.dept}</p>
+        <p><b>Doctor:</b> ${p.doctor}</p>
+        <p><b>Condition:</b> ${p.condition}</p>
+        <p><b>Status:</b> ${p.status}</p>
+        <p><b>Last Visit:</b> ${p.visit}</p>
+      `;
+      d.scrollIntoView({behavior:'smooth'});
+    }
+  </script>
+</body>
+</html>
